@@ -14,8 +14,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <UserProvider>
                 <MessageProvider>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <CssBaseline />
-                    <App />
+                        <CssBaseline />
+                        <App />
                     </LocalizationProvider>
                 </MessageProvider>
             </UserProvider>

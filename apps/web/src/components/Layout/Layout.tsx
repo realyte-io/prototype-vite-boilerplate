@@ -11,7 +11,9 @@ function AppLayout() {
     return (
         <section>
             <Navigation />
-            <ContentWrapper><Outlet /></ContentWrapper>
+            <ContentWrapper>
+                <Outlet />
+            </ContentWrapper>
         </section>
     )
 }
