@@ -52,15 +52,7 @@ jobs:
       - name: Capture Terraform Output
         id: tf_outputs
         working-directory: ./infra
-        run: terraform output -json > terraform_outputs.json
-
-      - name: Print terraform_outputs.json file
-        working-directory: .
-        run: cat ./infra/terraform_outputs.json
-
-      - name: Generate .env file from Terraform output
-        working-directory: .
-        run: node ./scripts/generateEnvFromTerraformOutput.js
+        run: terraform output > ../apps/web/.env
 
       - name: Print .env file
         run: cat ./apps/web/.env
