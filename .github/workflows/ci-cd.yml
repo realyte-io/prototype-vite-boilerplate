@@ -55,8 +55,8 @@ jobs:
         run: terraform output -json > terraform_outputs.json
 
       - name: Print terraform_outputs.json file
-        working-directory: ./infra
-        run: cat ./terraform_outputs.json
+        working-directory: .
+        run: cat ./infra/terraform_outputs.json
 
       - name: Generate .env file from Terraform output
         working-directory: .
