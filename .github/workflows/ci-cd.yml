@@ -128,14 +128,14 @@ jobs:
           name: env
           path: ./apps/web
 
-      - name: Debug .env file
-        run: cat ./apps/web/.env
-
       - name: Extract domain name from .env
         id: extract_domain
         run: |
           domain_name=$(grep -E '^domain_name=.*' ./apps/web/.env | cut -d '=' -f 2)
           echo "DOMAIN_NAME=${domain_name}" >> $GITHUB_ENV
+
+      - name: Debug dist directory
+        run: ls -la ./apps/web
 
       - name: Sync S3 bucket
         run: |
