@@ -41,7 +41,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./infra
-        if: github.ref == 'refs/heads/staging'
+        if: github.ref == 'refs/heads/main'
         run: terraform apply -input=false tfplan
 
       - name: Capture Terraform Output
