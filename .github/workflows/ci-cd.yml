@@ -131,7 +131,7 @@ jobs:
       - name: Extract domain name
         id: extract_domain
         run: |
-          domain_name=$(grep -oP '(?<=^domain_name=).+' ./apps/web/.env/.env)
+          domain_name=$(grep -oP '(?<=^domain_name=).+' ./apps/web/.env)
           echo "DOMAIN_NAME=${domain_name}" >> $GITHUB_ENV
 
       - name: Sync S3 bucket
