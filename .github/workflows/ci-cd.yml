@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: env
-          path: ./apps/web
+          path: ./apps/web/.env
 
   build:
     runs-on: ubuntu-latest
@@ -120,7 +120,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: dist
-          path: ./apps/web/dist
+          path: ./apps/web
 
       - name: Download .env file
         uses: actions/download-artifact@v2
@@ -131,7 +131,7 @@ jobs:
       - name: Extract domain name
         id: extract_domain
         run: |
-          domain_name=$(grep -oP '(?<=^domain_name=).+' ./apps/web/.env)
+          domain_name=$(grep -oP '(?<=^domain_name=).+' ./apps/web/.env/.env)
           echo "DOMAIN_NAME=${domain_name}" >> $GITHUB_ENV
 
       - name: Sync S3 bucket
