@@ -15,7 +15,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.18",
     "@mui/x-date-pickers": "^7.5.0",
-    "@panocreation/react-auth": "1.12.18",
+    "@panocreation/react-auth": "1.12.19",
     "@repo/ui": "*",
     "@vitejs/plugin-react": "^4.2.1",
     "date-fns": "^3.6.0",
