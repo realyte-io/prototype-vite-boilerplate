@@ -1,0 +1,141 @@
+name: Staging CI/CD
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  infrastructure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Setup AWS Profile
+        run: |
+          mkdir -p ~/.aws
+          echo "[default]" >> ~/.aws/credentials
+          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
+          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+          echo "[profile default]" >> ~/.aws/config
+          echo "region = us-east-1" >> ~/.aws/config
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        working-directory: ./infra
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./infra
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./infra
+        if: github.ref == 'refs/heads/staging'
+        run: terraform apply -input=false tfplan
+
+      - name: Capture Terraform Output
+        id: tf_outputs
+        working-directory: ./infra
+        run: terraform output > ../apps/web/.env
+
+      - name: Print .env file
+        run: cat ./apps/web/.env
+
+      - name: Upload .env file
+        uses: actions/upload-artifact@v2
+        with:
+          name: env
+          path: ./apps/web/.env
+
+  build:
+    runs-on: ubuntu-latest
+    needs: infrastructure
+
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@panocreation"
+          auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Download .env file
+        uses: actions/download-artifact@v2
+        with:
+          name: env
+          path: ./apps/web
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload dist directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: ./apps/web/dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [infrastructure, build]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Download dist directory
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: ./apps/web/dist
+
+      - name: Download .env file
+        uses: actions/download-artifact@v2
+        with:
+          name: env
+          path: ./apps/web
+
+      - name: Extract domain name from .env
+        id: extract_domain
+        run: |
+          domain_name=$(grep -E '^domain_name\s*=\s*".*"$' ./apps/web/.env | cut -d '=' -f 2 | tr -d ' "')
+          echo "Extracted domain_name: '${domain_name}'"
+          echo "DOMAIN_NAME=${domain_name}" >> $GITHUB_ENV
+
+      - name: Sync S3 bucket
+        run: |
+          aws s3 sync ./apps/web/dist s3://$DOMAIN_NAME --delete --acl public-read

@@ -18,5 +18,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "husky": "^9.0.11"
+  }
 }
