@@ -137,7 +137,7 @@ jobs:
           echo "Contents of .env file:"
           cat ./apps/web/.env
             
-          domain_name=$(grep -E '^domain_name=.*' ./apps/web/.env | cut -d '=' -f 2 | tr -d '\r')
+          domain_name=$(grep -E '^domain_name\s*=\s*".*"$' ./apps/web/.env | cut -d '=' -f 2 | tr -d ' "')
           echo "Extracted domain_name: '${domain_name}'"
           echo "DOMAIN_NAME=${domain_name}" >> $GITHUB_ENV
 
