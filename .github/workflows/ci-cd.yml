@@ -59,6 +59,7 @@ jobs:
         run: cat ./terraform_outputs.json
 
       - name: Generate .env file from Terraform output
+        working-directory: .
         run: node ./scripts/generateEnvFromTerraformOutput.js
 
       - name: Print .env file
