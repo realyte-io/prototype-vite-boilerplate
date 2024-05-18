@@ -27,3 +27,8 @@ output "cognito_user_pool_client_id" {
     description = "The ID of the Cognito user pool client to use for authentication"
     value       = module.auth.cognito_user_pool_client.id
 }
+
+output "domain_name" {
+    description = "The value of the domain"
+    value = local.domain_name
+}

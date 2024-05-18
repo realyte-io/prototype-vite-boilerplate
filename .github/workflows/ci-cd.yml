@@ -6,40 +6,8 @@ on:
       - develop
 
 jobs:
-  build:
+  infrastructure:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: "https://npm.pkg.github.com/"
-          scope: "@panocreation"
-          auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-
-      - name: Lint code
-        run: npm run lint
-
-      - name: Build project
-        run: npm run build
-
-  terraform:
-    runs-on: ubuntu-latest
-    needs: build
 
     steps:
       - name: Checkout repository
@@ -70,7 +38,7 @@ jobs:
 
       - name: Select Terraform Workspace
         working-directory: ./infra
-        run: terraform workspace select develop || terraform workspace new develop
+        run: terraform workspace select dev || terraform workspace new dev
 
       - name: Terraform Plan
         working-directory: ./infra
@@ -80,3 +48,75 @@ jobs:
         working-directory: ./infra
         if: github.ref == 'refs/heads/develop'
         run: terraform apply -input=false tfplan
+
+      - name: Capture Terraform Output
+        id: tf_outputs
+        working-directory: ./infra
+        run: terraform output -json > terraform_outputs.json
+
+      - name: Generate .env file from Terraform output
+        run: |
+          echo "Generating .env file from Terraform output"
+          mkdir -p ./apps/web
+          echo "" > ./apps/web/.env
+          cat ./infra/terraform_outputs.json | grep -o '"[a-zA-Z_]*":{[^}]*"value":"[^"]*"' | sed 's/"\([a-zA-Z_]*\)":{[^}]*"value":"\([^"]*\)"/\1=\2/' | awk '{print toupper($0)}' >> ./apps/web/.env
+
+      - name: Print .env file
+        run: cat ./apps/web/.env
+
+  build:
+    runs-on: ubuntu-latest
+    needs: infrastructure
+
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@panocreation"
+          auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [infrastructure, build]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Extract domain name
+        id: extract_domain
+        run: |
+          domain_name=$(cat ./infra/terraform_outputs.json | grep -o '"domain_name":{[^}]*"value":"[^"]*"' | sed 's/.*"value":"\([^"]*\)".*/\1/')
+          echo "DOMAIN_NAME=${domain_name}" >> $GITHUB_ENV
+
+      - name: Sync S3 bucket
+        run: |
+          aws s3 sync ./apps/web/dist s3://$DOMAIN_NAME --delete
