@@ -11,6 +11,9 @@ const envFilePath = path.join(__dirname, '..', 'apps', 'web', '.env');
 function generateEnvFile() {
     try {
         const data = fs.readFileSync(terraformOutputsPath, 'utf8');
+
+        console.log('Content of terraform_outputs.json:', data, terraformOutputsPath, envFilePath);
+
         const outputs = JSON.parse(data);
 
         let envContent = '';
