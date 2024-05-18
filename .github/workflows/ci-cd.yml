@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: env
-          path: ./apps/web/env
+          path: ./apps/web
 
   build:
     runs-on: ubuntu-latest
