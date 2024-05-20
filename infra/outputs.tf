@@ -17,3 +17,13 @@ output "domain_name" {
     description = "The value of the domain"
     value = local.domain_name
 }
+
+output "db_instance_endpoint" {
+    description = "The connection endpoint for the RDS instance"
+    value       = module.database.db_instance_endpoint
+}
+
+output "db_name" {
+    description = "The name of the database"
+    value = module.database.db_name
+}

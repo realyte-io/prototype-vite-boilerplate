@@ -38,3 +38,19 @@ module "hosting" {
     route53_zone_id             = var.route53_zone_id
     tags                        = local.tags
 }
+
+module "vpc" {
+    source = "./modules/vpc"
+    // Variables
+    application_name            = var.application_name
+    environment                 = local.environment
+}
+
+module "database" {
+    source = "./modules/database"
+    // Variables
+    application_name            = var.application_name
+    environment                 = local.environment
+    vpc_id                      = module.vpc.vpc_id
+    private_subnet_ids          = module.vpc.private_subnet_ids
+}
