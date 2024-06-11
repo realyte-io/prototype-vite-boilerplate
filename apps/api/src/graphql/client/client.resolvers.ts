@@ -33,7 +33,7 @@ const clientResolvers = {
                 where: { id },
             })
         },
-    }
+    },
 }
 
 export default clientResolvers
