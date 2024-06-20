@@ -52,7 +52,9 @@ jobs:
       - name: Capture Terraform Output
         id: tf_outputs
         working-directory: ./infra
-        run: terraform output > ../apps/web/.env
+        run: |
+          terraform output > ../apps/web/.env
+          terraform output > ../apps/api/.env
 
       - name: Print .env file
         run: cat ./apps/web/.env
