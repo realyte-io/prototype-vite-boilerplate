@@ -6,17 +6,16 @@ on:
       - develop
 
 jobs:
-  build-api:
+  build-api-and-set-up-infrastructure:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
           registry-url: "https://npm.pkg.github.com/"
           scope: "@panocreation"
           auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
@@ -32,26 +31,6 @@ jobs:
 
       - name: Build project
         run: npm run build
-
-      - name: Upload api dist directory
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist api
-          path: ./apps/api/dist
-
-  infrastructure:
-    runs-on: ubuntu-latest
-    needs: build-api
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Download dist directory
-        uses: actions/download-artifact@v2
-        with:
-          name: dist api
-          path: ./apps/api/dist
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -109,18 +88,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: infrastructure
 
-    strategy:
-      matrix:
-        node-version: [ 18.x ]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
           registry-url: "https://npm.pkg.github.com/"
           scope: "@panocreation"
           auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
