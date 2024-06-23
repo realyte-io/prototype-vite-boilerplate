@@ -6,12 +6,68 @@ on:
       - develop
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    needs: infrastructure
+
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@panocreation"
+          auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Download .env file
+        uses: actions/download-artifact@v2
+        with:
+          name: env
+          path: ./apps/web
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload web dist directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist web
+          path: ./apps/web/dist
+
+      - name: Upload api dist directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist api
+          path: ./apps/api/dist
+
   infrastructure:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Download dist directory
+        uses: actions/download-artifact@v2
+        with:
+          name: dist api
+          path: ./apps/api/dist
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -65,50 +121,6 @@ jobs:
           name: env
           path: ./apps/web/.env
 
-  build:
-    runs-on: ubuntu-latest
-    needs: infrastructure
-
-    strategy:
-      matrix:
-        node-version: [ 18.x ]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: "https://npm.pkg.github.com/"
-          scope: "@panocreation"
-          auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-
-      - name: Download .env file
-        uses: actions/download-artifact@v2
-        with:
-          name: env
-          path: ./apps/web
-
-      - name: Lint code
-        run: npm run lint
-
-      - name: Build project
-        run: npm run build
-
-      - name: Upload dist directory
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: ./apps/web/dist
-
   deploy:
     runs-on: ubuntu-latest
     needs: [infrastructure, build]
@@ -127,7 +139,7 @@ jobs:
       - name: Download dist directory
         uses: actions/download-artifact@v2
         with:
-          name: dist
+          name: dist web
           path: ./apps/web/dist
 
       - name: Download .env file
