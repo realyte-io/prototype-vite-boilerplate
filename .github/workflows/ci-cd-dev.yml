@@ -31,7 +31,7 @@ jobs:
         run: npm run lint
 
       - name: Build project
-        run: turbo build --filter=api
+        run: npm run build
 
       - name: Upload api dist directory
         uses: actions/upload-artifact@v2
