@@ -6,12 +6,8 @@ on:
       - develop
 
 jobs:
-  build:
+  build-api:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [ 18.x ]
 
     steps:
       - name: Checkout repository
@@ -31,23 +27,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
-      - name: Download .env file
-        uses: actions/download-artifact@v2
-        with:
-          name: env
-          path: ./apps/web
-
       - name: Lint code
         run: npm run lint
 
       - name: Build project
-        run: npm run build
-
-      - name: Upload web dist directory
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist web
-          path: ./apps/web/dist
+        run: turbo build --filter=api
 
       - name: Upload api dist directory
         uses: actions/upload-artifact@v2
@@ -57,7 +41,7 @@ jobs:
 
   infrastructure:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-api
 
     steps:
       - name: Checkout repository
@@ -120,6 +104,50 @@ jobs:
         with:
           name: env
           path: ./apps/web/.env
+
+  build:
+    runs-on: ubuntu-latest
+    needs: infrastructure
+
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@panocreation"
+          auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Download .env file
+        uses: actions/download-artifact@v2
+        with:
+          name: env
+          path: ./apps/web
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload web dist directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist web
+          path: ./apps/web/dist
 
   deploy:
     runs-on: ubuntu-latest
