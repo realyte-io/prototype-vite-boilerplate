@@ -125,7 +125,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [infrastructure, build]
+    needs: [build-api-and-set-up-infrastructure, build]
 
     steps:
       - name: Checkout repository
