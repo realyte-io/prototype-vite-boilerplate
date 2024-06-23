@@ -9,6 +9,6 @@ export interface Context {
     user: Promise<CognitoAccessTokenPayload>
 }
 
-export const context = ({ req }): Context => {
-    return { prisma, user: authenticateUser(req) }
+export const context = ({ event }): Context => {
+    return { prisma, user: authenticateUser(event) }
 }

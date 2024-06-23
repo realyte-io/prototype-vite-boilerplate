@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "concurrently \"npm run copy-files\" \"tsc-watch -p tsconfig.json --onSuccess 'node dist/index.js'\"",
     "build": "concurrently \"tsc\" \"npm run copy-files\"",
+    "postbuild": "cp package.json dist && cp ../../package-lock.json dist && cp -R prisma dist && cd dist && npm ci --omit=dev && npx prisma generate",
     "copy-files": "copyfiles -u 1 src/**/*.graphql dist/",
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.4",
     "@graphql-tools/utils": "^10.2.2",
-    "@prisma/client": "^5.14.0",
+    "@prisma/client": "^5.15.1",
     "aws-jwt-verify": "^4.0.1",
     "aws-lambda": "^1.0.7",
     "dotenv": "^16.4.5",

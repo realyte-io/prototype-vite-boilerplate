@@ -5,7 +5,6 @@ import { defaultFieldResolver, GraphQLError } from 'graphql'
 
 const authDirective = (next) => async (root, args, context, info) => {
     const user = await context.user
-    console.log(user)
 
     if (!user?.sub) {
         throw new GraphQLError('Not authorized')

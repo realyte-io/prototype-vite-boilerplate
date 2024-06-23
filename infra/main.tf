@@ -54,3 +54,14 @@ module "database" {
     vpc_id                      = module.vpc.vpc_id
     private_subnet_ids          = module.vpc.private_subnet_ids
 }
+
+module "api" {
+    source = "./modules/api"
+    // Variables
+    application_name            = var.application_name
+    environment                 = local.environment
+    cognito_user_pool_client_id = module.auth.cognito_user_pool_client.id
+    cognito_user_pool_id        = module.auth.cognito_user_pool.id
+    db_instance_endpoint        = module.database.db_instance_endpoint
+    db_name                     = module.database.db_name
+}

@@ -1,5 +1,6 @@
 import { CognitoJwtVerifier } from 'aws-jwt-verify'
 import { CognitoAccessTokenPayload } from 'aws-jwt-verify/jwt-model'
+import { APIGatewayEvent } from 'aws-lambda'
 
 const verifier = CognitoJwtVerifier.create({
     tokenUse: 'access',
@@ -8,9 +9,9 @@ const verifier = CognitoJwtVerifier.create({
 })
 
 export async function authenticateUser(
-    request: Request,
+    event: APIGatewayEvent,
 ): Promise<CognitoAccessTokenPayload | null> {
-    const token = request.headers?.['authorization']
+    const token = event.headers?.['Authorization']
 
     if (token) {
         try {
