@@ -22,5 +22,8 @@
   ],
   "dependencies": {
     "husky": "^9.0.11"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.18.0"
   }
 }
