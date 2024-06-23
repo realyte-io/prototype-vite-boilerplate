@@ -86,7 +86,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: infrastructure
+    needs: build-api-and-set-up-infrastructure
 
     steps:
       - name: Checkout repository
