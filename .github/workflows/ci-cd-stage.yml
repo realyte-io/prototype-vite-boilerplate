@@ -6,12 +6,31 @@ on:
       - main
 
 jobs:
-  infrastructure:
+  build-api-and-set-up-infrastructure:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          registry-url: "https://npm.pkg.github.com/"
+          scope: "@panocreation"
+          auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -52,7 +71,9 @@ jobs:
       - name: Capture Terraform Output
         id: tf_outputs
         working-directory: ./infra
-        run: terraform output > ../apps/web/.env
+        run: |
+          terraform output > ../apps/web/.env
+          terraform output > ../apps/api/.env
 
       - name: Print .env file
         run: cat ./apps/web/.env
@@ -65,20 +86,15 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: infrastructure
-
-    strategy:
-      matrix:
-        node-version: [ 18.x ]
+    needs: build-api-and-set-up-infrastructure
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
           registry-url: "https://npm.pkg.github.com/"
           scope: "@panocreation"
           auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
@@ -101,15 +117,15 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Upload dist directory
+      - name: Upload web dist directory
         uses: actions/upload-artifact@v2
         with:
-          name: dist
+          name: dist web
           path: ./apps/web/dist
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [infrastructure, build]
+    needs: [build-api-and-set-up-infrastructure, build]
 
     steps:
       - name: Checkout repository
@@ -125,7 +141,7 @@ jobs:
       - name: Download dist directory
         uses: actions/download-artifact@v2
         with:
-          name: dist
+          name: dist web
           path: ./apps/web/dist
 
       - name: Download .env file

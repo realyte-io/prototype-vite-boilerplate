@@ -1,6 +1,47 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
+provider "registry.terraform.io/cyrilgdn/postgresql" {
+  version     = "1.22.0"
+  constraints = "~> 1.14"
+  hashes = [
+    "h1:8jjuILf07SZmfJjKsjEAlu5125pyRy4sSEJ+y68N7FU=",
+    "zh:038df91e31bda2a9a1f33adc886bc2084793e151130e29909b92f18b91315724",
+    "zh:093328afc09cf13a5aed64daf9dc32d764e0a2b3c626c532e211fc22c08088f3",
+    "zh:108ae8321312085037b987bbe0a4a8e8aa34a763b5b73ad6d9a78d605fa8074d",
+    "zh:2ef4ae45a8df16ad3e3b2c8082a605354c5ca34015b1709123a911a98f93320d",
+    "zh:35e13819840c74d8c01fabbe124b44718364acea905066c68fd7ee7d3b4ffc09",
+    "zh:4eee265e184067d7574787cb682d7f5e339271adc91ec0026de1ab9700f24e39",
+    "zh:5defd2ac1825d25897125b21c929827dcd471cff7ba8e92c6ae006830bc7bb8c",
+    "zh:8ef0f114516bd83d87667472f90e609b2c033431d5c9d563db5ca2b87bad9726",
+    "zh:97ee6cf040e34f649ddc0554dca7db132f6bddae5defe133f21dffa01ece33fe",
+    "zh:982a831ee1346ae7790ddb6efa8f34297964d68f2910a1ce401505ea96c4bffa",
+    "zh:a8aefc6c22ff2ffff69d269ba180fdf021ba8510fa3a00683f356f3434657a4a",
+    "zh:b153499f77d00fae59c6f7d301fd6ffc3595143d540ed475ccf2747bcc1920ac",
+    "zh:b27e28690c8ca74b861f7ffccd98ada374c8a2cb0e200dbc028c679c009b5779",
+    "zh:d05579c9998a3efa36b3397a840676edfc8328a6075110d7365ac322f5ce268c",
+  ]
+}
+
+provider "registry.terraform.io/hashicorp/archive" {
+  version = "2.4.2"
+  hashes = [
+    "h1:1eOz9vM/55vnQjxk23RhnYga7PZq8n2rGxG+2Vx2s6w=",
+    "zh:08faed7c9f42d82bc3d406d0d9d4971e2d1c2d34eae268ad211b8aca57b7f758",
+    "zh:3564112ed2d097d7e0672378044a69b06642c326f6f1584d81c7cdd32ebf3a08",
+    "zh:53cd9afd223c15828c1916e68cb728d2be1cbccb9545568d6c2b122d0bac5102",
+    "zh:5ae4e41e3a1ce9d40b6458218a85bbde44f21723943982bca4a3b8bb7c103670",
+    "zh:5b65499218b315b96e95c5d3463ea6d7c66245b59461217c99eaa1611891cd2c",
+    "zh:78d5eefdd9e494defcb3c68d282b8f96630502cac21d1ea161f53cfe9bb483b3",
+    "zh:7f45b35a8330bebd184c2545a41782ff58240ed6ba947274d9881dd5da44b02e",
+    "zh:87e67891033214e55cfead1391d68e6a3bf37993b7607753237e82aa3250bb71",
+    "zh:de3590d14037ad81fc5cedf7cfa44614a92452d7b39676289b704a962050bc5e",
+    "zh:e7e6f2ea567f2dbb3baa81c6203be69f9cd6aeeb01204fd93e3cf181e099b610",
+    "zh:fd24d03c89a7702628c2e5a3c732c0dede56fa75a08da4a1efe17b5f881c88e2",
+    "zh:febf4b7b5f3ff2adff0573ef6361f09b6638105111644bdebc0e4f575373935f",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/aws" {
   version     = "5.25.0"
   constraints = "~> 5.25.0"

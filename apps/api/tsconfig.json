@@ -1,0 +1,17 @@
+{
+  "include": ["src/**/*"],
+  "exclude": ["__tests__", "node_modules"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "declarationDir": "dist",
+    "target": "ES5",
+    "module": "commonjs",
+    "allowJs": true,
+    "noEmit": false,
+    "noEmitOnError": false,
+    "declaration": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+  }
+}
