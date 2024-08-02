@@ -58,6 +58,7 @@ module "database" {
 module "api" {
     source = "./modules/api"
     // Variables
+    aws_region                  = var.region
     application_name            = var.application_name
     environment                 = local.environment
     cognito_user_pool_client_id = module.auth.cognito_user_pool_client.id

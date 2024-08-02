@@ -101,6 +101,8 @@ resource "aws_cognito_user_pool" "main" {
 resource "aws_cognito_user_pool_client" "app-client" {
   name                  = "${var.application_name}-app-client-${var.environment}"
   user_pool_id          = aws_cognito_user_pool.main.id
+  access_token_validity = 24
+  id_token_validity     = 24
   generate_secret       = false
     explicit_auth_flows = [
         "ALLOW_REFRESH_TOKEN_AUTH",

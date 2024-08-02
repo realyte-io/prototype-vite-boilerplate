@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "prototype-vite-boilerplate",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",

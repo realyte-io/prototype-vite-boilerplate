@@ -27,3 +27,8 @@ output "db_name" {
     description = "The name of the database"
     value = module.database.db_name
 }
+
+output "graphql_api_url" {
+    description = "The graphql api endpoint"
+    value       = module.api.graphql_api_url
+}

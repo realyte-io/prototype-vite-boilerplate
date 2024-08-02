@@ -1,3 +1,8 @@
+variable "aws_region" {
+  description = "The aws region"
+  default     = "eu-central-1"
+}
+
 variable "environment" {
   description = "The environment to deploy to"
   default     = "develop"

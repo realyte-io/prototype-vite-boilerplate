@@ -11,7 +11,8 @@ const verifier = CognitoJwtVerifier.create({
 export async function authenticateUser(
     event: APIGatewayEvent,
 ): Promise<CognitoAccessTokenPayload | null> {
-    const token = event.headers?.['Authorization']
+    const token =
+        event.headers?.['Authorization'] || event.headers?.authorization
 
     if (token) {
         try {
