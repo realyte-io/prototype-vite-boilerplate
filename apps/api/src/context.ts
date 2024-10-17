@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { authenticateUser } from './auth'
-import { CognitoAccessTokenPayload } from 'aws-jwt-verify/jwt-model'
+import { User } from './types'
 
 const prisma = new PrismaClient()
 
 export interface Context {
     prisma: PrismaClient
-    user: Promise<CognitoAccessTokenPayload>
+    user: Promise<User>
 }
 
 export const context = ({ event, req }): Context => {

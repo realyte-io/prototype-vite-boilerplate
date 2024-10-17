@@ -2,24 +2,33 @@ import { Context } from '../../context'
 
 const clientResolvers = {
     Query: {
-        getAllClients: (_, _args, context: Context) => {
-            return context.prisma.client.findMany()
+        getAllClients: async (_, _args, context: Context) => {
+            const companyId = (await context.user).companyId
+
+            return context.prisma.client.findMany({
+                where: { companyId },
+            })
         },
     },
     Mutation: {
         createClient: async (_, { input }, context: Context) => {
+            const user = await context.user
+
             return context.prisma.client.create({
                 data: {
                     email: input.email,
                     phone: input.phone,
                     firstname: input.firstname,
                     lastname: input.lastname,
+                    companyId: user.companyId,
                 },
             })
         },
         updateClient: async (_, { id, input }, context) => {
+            const companyId = (await context.user).companyId
+
             return context.prisma.client.update({
-                where: { id },
+                where: { id, companyId },
                 data: {
                     email: input.email || undefined,
                     phone: input.phone || undefined,
@@ -29,8 +38,10 @@ const clientResolvers = {
             })
         },
         deleteClient: async (_, { id }, context) => {
+            const companyId = (await context.user).companyId
+
             return context.prisma.client.delete({
-                where: { id },
+                where: { id, companyId },
             })
         },
     },

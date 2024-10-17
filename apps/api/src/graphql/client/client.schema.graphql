@@ -10,6 +10,7 @@ type Client {
     id: String!
     firstname: String
     lastname: String
+    companyId: String!
 }
 
 input CreateClientInput {
