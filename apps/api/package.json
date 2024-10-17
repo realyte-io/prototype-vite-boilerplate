@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"npm run copy-files\" \"tsc-watch -p tsconfig.json --onSuccess 'node dist/index.js'\"",
     "build": "concurrently \"node build.js\" \"npm run copy-files\"",
-    "postbuild": "mkdir -p dist/node_modules/@prisma && cp -R ../../node_modules/@prisma dist/node_modules && cp -R prisma dist && cd dist && npx prisma generate",
+    "postbuild": "cp -R prisma dist",
     "copy-files": "copyfiles -u 1 src/**/*.graphql dist/",
     "lint": "eslint . --max-warnings 0"
   },

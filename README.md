@@ -9,6 +9,8 @@
     -   NODE_AUTH_TOKEN
 -   Change package.json data
 -   `npm install`
+-   `npx prisma generate`
+-   `npm install`
 -   `npm run build`
 -   `infra/variables.tf` => change application name
 -   `infra/terraform.tf` => change state key
@@ -21,7 +23,7 @@
 -   Add `DATABASE_URL` to api/.env
 -   delete all node_modules folder
 -   `npm install`
--   `npm run build`
+-   `npm run build` (im web verzeichnis)
 -   `aws s3 sync ../apps/web/dist s3://DOMAIN_ENV --delete --acl public-read`
 
 api env IS_LOCAL=true

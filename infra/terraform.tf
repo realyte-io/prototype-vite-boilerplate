@@ -14,8 +14,8 @@ terraform {
 
 terraform {
   backend "s3" {
-    bucket  = "realyte-prototype-vite"
-    key     = "terraform.tfstate"
+    bucket  = "terraform-application-states"
+    key     = "xxx-terraform.tfstate"
     region  = "eu-central-1"
     encrypt = true
   }
