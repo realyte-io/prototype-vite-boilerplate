@@ -15,7 +15,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.18",
     "@mui/x-date-pickers": "^7.12.0",
-    "@panocreation/react-auth": "1.12.19",
+    "@panocreation/react-auth": "1.12.20",
     "@repo/ui": "*",
     "@vitejs/plugin-react": "^4.2.1",
     "@prisma/client": "^5.15.1",
