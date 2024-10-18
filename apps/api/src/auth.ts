@@ -3,6 +3,7 @@ import { APIGatewayEvent } from 'aws-lambda'
 import {
     CognitoIdentityProviderClient,
     GetUserCommand,
+    AdminCreateUserCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
 import { User } from './types'
 
@@ -45,4 +46,37 @@ export async function authenticateUser(
     }
 
     return null
+}
+
+export async function inviteUser(
+    email: string,
+    companyId: string,
+): Promise<string> {
+    try {
+        const command = new AdminCreateUserCommand({
+            UserPoolId: process.env.cognito_user_pool_id || '',
+            Username: email,
+            DesiredDeliveryMediums: ['EMAIL'],
+            UserAttributes: [
+                {
+                    Name: 'email',
+                    Value: email,
+                },
+                {
+                    Name: 'custom:companyId',
+                    Value: companyId,
+                },
+                {
+                    Name: 'email_verified',
+                    Value: 'TRUE',
+                },
+            ],
+        })
+
+        await cognitoClient.send(command)
+
+        return email
+    } catch (e) {
+        console.error(e, 'Invite User')
+    }
 }

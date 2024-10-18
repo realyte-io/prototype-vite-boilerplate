@@ -10,6 +10,7 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.670.0",
     "@graphql-tools/schema": "^10.0.4",
     "@graphql-tools/utils": "^10.2.2",
     "@prisma/client": "^5.15.1",

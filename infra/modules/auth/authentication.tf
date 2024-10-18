@@ -95,6 +95,14 @@ resource "aws_cognito_user_pool" "main" {
     email_subject        = "Your verification code"
   }
 
+  admin_create_user_config {
+    invite_message_template {
+      email_subject = "Du wurdest zu ${var.application_name} hinzugefügt"
+      email_message = "Du wurdest mit dieser E-Mail Adresse: {username} eingeladen. Bitte klicke auf den Link https://${var.domain_name}/signup/company und verwende das temporäre Kennwort für die erste Anmeldung: {####}"
+      sms_message = "Du wurdest mit dieser E-Mail Adresse: {username} eingeladen. Bitte verwende das temporäre Kennwort für die erste Anmeldung: {####}"
+    }
+  }
+
   tags = var.tags
 }
 

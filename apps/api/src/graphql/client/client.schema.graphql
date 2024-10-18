@@ -21,6 +21,7 @@ input CreateClientInput {
 }
 
 type Mutation {
+    inviteUser(email: String!): String!
     createClient(input: CreateClientInput!): Client!
     updateClient(id: String!, input: CreateClientInput!): Client!
     deleteClient(id: String!): Client!

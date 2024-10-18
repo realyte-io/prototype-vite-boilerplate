@@ -1,4 +1,5 @@
 import { Context } from '../../context'
+import { inviteUser } from '../../auth'
 
 const clientResolvers = {
     Query: {
@@ -11,6 +12,10 @@ const clientResolvers = {
         },
     },
     Mutation: {
+        inviteUser: async (_, { email }, context: Context) => {
+            const companyId = (await context.user).companyId
+            return inviteUser(email, companyId)
+        },
         createClient: async (_, { input }, context: Context) => {
             const user = await context.user
 

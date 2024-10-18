@@ -8,7 +8,8 @@ export default function LoginPage() {
     const navigate = useNavigate()
     const { setMessage } = useContext(MessageContext)
 
-    const handleError = () => {
+    const handleError = (e) => {
+        console.log(e)
         setMessage({
             open: true,
             type: 'error',

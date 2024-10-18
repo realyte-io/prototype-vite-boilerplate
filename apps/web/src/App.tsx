@@ -6,6 +6,7 @@ import ForgotPasswordPage from './pages/auth/forgot-password'
 import CodeConfirmationPage from './pages/auth/signup/confirm'
 import Layout from './components/Layout/Layout'
 import BasicFormPage from './pages/form'
+import CompanySignupPage from './pages/auth/signup/company'
 
 const routes = createBrowserRouter([
     {
@@ -30,12 +31,16 @@ const routes = createBrowserRouter([
         element: <SignupPage />,
     },
     {
-        path: '/forgot-password',
-        element: <ForgotPasswordPage />,
-    },
-    {
         path: '/signup/confirm',
         element: <CodeConfirmationPage />,
+    },
+    {
+        path: '/signup/:id',
+        element: <CompanySignupPage />,
+    },
+    {
+        path: '/forgot-password',
+        element: <ForgotPasswordPage />,
     },
 ])
 
